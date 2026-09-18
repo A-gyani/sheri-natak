@@ -73,6 +73,15 @@
     font-size: 12px; line-height: 1.4; color: rgba(246,243,236,0.82);
   }
   .dept strong { display: block; color: #F6F3EC; font-size: 13.5px; font-weight: 600; }
+  .lang {
+    flex: none; align-self: flex-start; display: inline-flex;
+    border: 1px solid rgba(246,243,236,0.35); border-radius: 6px; overflow: hidden;
+  }
+  .lang button {
+    padding: 0 9px; height: 26px; border: 0; background: transparent;
+    font-size: 12px; font-weight: 600; color: rgba(246,243,236,0.75); line-height: 1;
+  }
+  .lang button.on { background: #E9A62B; color: #1E2D5C; }
   .toran {
     height: 12px; position: relative;
     background:
@@ -252,9 +261,11 @@
     .masthead-inner { padding: 18px 20px 20px; }
     .emblem { width: 54px; height: 54px; } .emblem svg { width: 33px; height: 33px; }
     .brand h1 { font-size: 34px; }
-    .dept { flex: 0 1 auto; margin-top: 0; padding-top: 0; border-top: 0; text-align: right; font-size: 12.5px; }
+    .dept { flex: 0 1 auto; margin-top: 0; padding-top: 0; border-top: 0; text-align: right; font-size: 12.5px; margin-left: auto; margin-right: 14px; }
     .page { padding-inline: 20px; }
-    .controls { grid-template-columns: 1.3fr 1fr auto; align-items: end; }
+    .controls { grid-template-columns: 1.3fr 1fr; align-items: end; }
+    .lang { order: 3; align-self: center; }
+    .dept { order: 2; }
     .layout { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 16px; align-items: start; }
     .panel { margin-top: 0; position: sticky; top: 12px; max-height: calc(100vh - 30px); }
     .panel-body { max-height: none; }
@@ -282,6 +293,10 @@
       <h1 data-i18n="title">શેરી નાટક</h1>
       <p class="sub" data-i18n="subtitle">District-wise Programme Calendar · Gujarat</p>
     </div>
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" id="langGu" data-lang="gu">ગુજ</button>
+      <button type="button" id="langEn" data-lang="en">EN</button>
+    </div>
     <div class="dept">
       <strong data-i18n="dept">કમિશનરશ્રી, યુવક સેવા અને સાંસ્કૃતિક પ્રવૃત્તિઓ</strong>
       <span data-i18n="govt">Government of Gujarat</span>
@@ -306,13 +321,6 @@
           <button id="nextMonth" type="button" aria-label="Next month"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></button>
         </div>
         <button class="btn" id="todayBtn" type="button" data-i18n="today">Today</button>
-      </div>
-    </div>
-    <div class="field">
-      <label data-i18n="langLabel">Language</label>
-      <div class="seg" role="group" aria-label="Language">
-        <button type="button" id="langGu" data-lang="gu">ગુજરાતી</button>
-        <button type="button" id="langEn" data-lang="en">English</button>
       </div>
     </div>
   </section>
