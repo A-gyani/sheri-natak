@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>શેરી નાટક Calendar</title>
+</head>
+<body>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rasa:wght@500;600;700&family=Hind+Vadodara:wght@400;500;600;700&display=swap">
+<style>
+  :root {
+    color-scheme: light;
+    --paper: #F6F3EC;
+    --paper-2: #FFFFFF;
+    --paper-3: #EEE9DE;
+    --line: #DCD5C6;
+    --line-strong: #C4BBA6;
+    --ink: #1C1B19;
+    --ink-2: #514D45;
+    --ink-3: #7C766A;
+    --indigo: #1E2D5C;
+    --indigo-2: #2B3F7E;
+    --indigo-soft: #E3E8F4;
+    --red: #A8232B;
+    --red-soft: #F6E1E2;
+    --marigold: #E9A62B;
+    --marigold-soft: #FBEFD4;
+    --green: #2E7D4F;
+    --c1: #FDF1D8;
+    --c2: #F8DA95;
+    --c3: #EFB44A;
+    --c4: #D8842A;
+    --c5: #B2521A;
+    --radius: 10px;
+    --font-display: "Rasa", "Noto Serif Gujarati", Georgia, serif;
+    --font-body: "Hind Vadodara", "Noto Sans Gujarati", "Segoe UI", system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html, body { background: var(--paper); }
+  body {
+    margin: 0; color: var(--ink);
+    font-family: var(--font-body); font-size: 15px; line-height: 1.45;
+    -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent;
+  }
+  button, select, input { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--marigold); outline-offset: 2px; }
+  .num { font-variant-numeric: tabular-nums; }
+
+  /* ---------- Masthead ---------- */
+  .masthead {
+    background: #1E2D5C; color: #F6F3EC;
+    background-image: radial-gradient(circle at 1px 1px, rgba(246,243,236,0.13) 1px, transparent 1.6px);
+    background-size: 14px 14px;
+  }
+  .masthead-inner {
+    max-width: 1100px; margin: 0 auto; padding: 14px 16px 16px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .emblem {
+    width: 44px; height: 44px; flex: none; border-radius: 50%; background: #E9A62B;
+    display: grid; place-items: center; box-shadow: 0 0 0 3px rgba(233,166,43,0.25);
+  }
+  .emblem svg { width: 27px; height: 27px; }
+  .brand { min-width: 0; flex: 1; }
+  .brand h1 { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: 26px; line-height: 1.05; }
+  .brand .sub { margin: 3px 0 0; font-size: 11.5px; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(246,243,236,0.78); }
+  .dept { display: none; text-align: right; font-size: 12.5px; line-height: 1.4; color: rgba(246,243,236,0.82); }
+  .dept strong { display: block; color: #F6F3EC; font-size: 13.5px; }
+  .toran {
+    height: 12px; position: relative;
+    background:
+      linear-gradient(135deg, #E9A62B 50%, transparent 50%) 0 0 / 12px 12px repeat-x,
+      linear-gradient(45deg, transparent 50%, #E9A62B 50%) 0 0 / 12px 12px repeat-x;
+  }
+  .toran::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 3px; background: #A8232B; }
+  .toran::after {
+    content: ""; position: absolute; inset: 0; opacity: 0.85;
+    background:
+      linear-gradient(135deg, #A8232B 50%, transparent 50%) 6px 0 / 24px 12px repeat-x,
+      linear-gradient(45deg, transparent 50%, #A8232B 50%) 6px 0 / 24px 12px repeat-x;
+  }
+
+  /* ---------- Page ---------- */
+  .page { max-width: 1100px; margin: 0 auto; padding-block: 12px 32px; padding-inline: 16px; }
+  .demo-note {
+    display: flex; align-items: flex-start; gap: 8px; padding: 8px 10px;
+    background: var(--marigold-soft); border: 1px solid #F0CF86;
+    border-radius: 8px; font-size: 12.5px; color: var(--ink-2); margin-bottom: 12px; line-height: 1.35;
+  }
+  .demo-note svg { flex: none; margin-top: 1px; }
+  .demo-note b { color: var(--ink); }
+
+  /* ---------- Controls ---------- */
+  .controls { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 12px; }
+  .field { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .field label { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; }
+  .select-wrap { position: relative; }
+  .select-wrap select {
+    appearance: none; width: 100%; padding: 11px 38px 11px 12px;
+    background: var(--paper-2); border: 1px solid var(--line-strong); border-radius: 8px; font-weight: 500; font-size: 15px;
+  }
+  .select-wrap::after {
+    content: ""; position: absolute; right: 14px; top: 50%; width: 8px; height: 8px;
+    border-right: 2px solid var(--ink-2); border-bottom: 2px solid var(--ink-2);
+    transform: translateY(-70%) rotate(45deg); pointer-events: none;
+  }
+  .row2 { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: end; }
+  .month-nav { display: flex; align-items: center; gap: 2px; background: var(--paper-2); border: 1px solid var(--line-strong); border-radius: 8px; padding: 3px; }
+  .month-nav button { width: 38px; height: 36px; border: 0; border-radius: 6px; background: transparent; display: grid; place-items: center; flex: none; }
+  .month-nav button:active { background: var(--paper-3); }
+  .month-nav .label { flex: 1; text-align: center; font-family: var(--font-display); font-weight: 600; font-size: 19px; }
+  .btn { padding: 0 14px; height: 44px; border: 1px solid var(--line-strong); border-radius: 8px; background: var(--paper-2); font-weight: 600; }
+  .search { position: relative; }
+  .search input {
+    width: 100%; padding: 11px 36px 11px 36px; background: var(--paper-2);
+    border: 1px solid var(--line-strong); border-radius: 8px; font-size: 15px;
+  }
+  .search > svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 15px; height: 15px; color: var(--ink-3); pointer-events: none; }
+  .search .clear { position: absolute; right: 4px; top: 50%; transform: translateY(-50%); border: 0; background: transparent; padding: 8px; color: var(--ink-3); display: none; }
+  .search.has .clear { display: block; }
+  .seg { display: inline-flex; border: 1px solid var(--line-strong); border-radius: 8px; overflow: hidden; background: var(--paper-2); }
+  .seg button { padding: 0 12px; height: 42px; border: 0; background: transparent; font-weight: 600; font-size: 13.5px; color: var(--ink-3); }
+  .seg button.on { background: var(--indigo); color: #F6F3EC; }
+
+  /* ---------- Stats ---------- */
+  .stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-bottom: 12px; }
+  .stat {
+    background: var(--paper-2); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 10px 12px; display: flex; flex-direction: column; gap: 0; border-top: 3px solid var(--indigo);
+  }
+  .stat.marigold { border-top-color: var(--marigold); }
+  .stat.red { border-top-color: var(--red); }
+  .stat.green { border-top-color: var(--green); }
+  .stat .k { font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; }
+  .stat .v { font-family: var(--font-display); font-size: 26px; font-weight: 700; line-height: 1.15; }
+  .stat .v.warn { color: var(--red); }
+  .stat .s { font-size: 12px; color: var(--ink-3); }
+  .stat.clickable { cursor: pointer; }
+  .stat.clickable:active { background: var(--paper-3); }
+
+  /* ---------- Calendar ---------- */
+  .calendar { background: var(--paper-2); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+  .cal-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+  .cal-head h2 { margin: 0; font-family: var(--font-display); font-size: 19px; font-weight: 600; line-height: 1.2; }
+  .cal-head .scope { font-size: 12.5px; color: var(--ink-3); }
+  .cal-head .split { font-size: 12px; color: var(--ink-2); display: flex; gap: 10px; white-space: nowrap; }
+  .cal-head .split i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--marigold); margin-right: 4px; }
+  .cal-head .split i.eve { background: var(--indigo); }
+  .weekdays { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); background: var(--paper-3); border-bottom: 1px solid var(--line); }
+  .weekdays div { padding: 6px 2px; text-align: center; font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; font-weight: 600; color: var(--ink-2); }
+  .weekdays div:first-child { color: var(--red); }
+  .grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 1px; background: var(--line); }
+  .cell {
+    background: var(--paper-2); min-height: 64px; padding: 5px 4px 4px; border: 0; position: relative;
+    display: flex; flex-direction: column; align-items: center; justify-content: space-between; color: var(--ink);
+  }
+  .cell.pad { background: var(--paper-3); color: var(--ink-3); cursor: default; }
+  .cell.pad .d { opacity: 0.45; }
+  .cell.n1 { background: var(--c1); }
+  .cell.n2 { background: var(--c2); }
+  .cell.n3 { background: var(--c3); }
+  .cell.n4 { background: var(--c4); color: #fff; }
+  .cell.n5 { background: var(--c5); color: #fff; }
+  .cell.selected { box-shadow: inset 0 0 0 3px var(--indigo); z-index: 2; }
+  .cell.n4.selected, .cell.n5.selected { box-shadow: inset 0 0 0 3px #fff; }
+  .cell .d { align-self: flex-start; font-weight: 600; font-size: 12px; line-height: 1; display: flex; align-items: center; gap: 4px; }
+  .cell .d.sun { color: var(--red); }
+  .cell.n4 .d.sun, .cell.n5 .d.sun { color: inherit; }
+  .cell.today .d::after { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--red); }
+  .cell.n4.today .d::after, .cell.n5.today .d::after { background: #fff; }
+  .cell .count { font-family: var(--font-display); font-size: 20px; font-weight: 700; line-height: 1; }
+  .cell .dots { display: flex; gap: 3px; height: 6px; }
+  .cell .dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--marigold); }
+  .cell .dots i.eve { background: var(--indigo); }
+  .cell.n3 .dots i { background: #fff; }
+  .cell.n3 .dots i.eve { background: var(--indigo); }
+  .cell.n4 .dots i, .cell.n5 .dots i { background: rgba(255,255,255,0.95); }
+  .cell.n4 .dots i.eve, .cell.n5 .dots i.eve { background: rgba(255,255,255,0.45); }
+  .legend { display: flex; align-items: center; justify-content: flex-end; gap: 5px; font-size: 11.5px; color: var(--ink-3); padding: 8px 12px; border-top: 1px solid var(--line); }
+  .legend i { display: inline-block; width: 13px; height: 13px; border-radius: 3px; border: 1px solid var(--line); }
+
+  /* ---------- Details: expands under the calendar on phone, side panel on desktop.
+     (Inline rather than a fixed overlay so it also works inside a Google Sites embed frame.) ---------- */
+  .backdrop { display: none; }
+  .panel {
+    margin-top: 12px;
+    background: var(--paper-2); border: 1px solid var(--line); border-radius: var(--radius);
+    display: flex; flex-direction: column; overflow: hidden;
+    scroll-margin-top: 8px;
+  }
+  .panel-body { max-height: 70vh; }
+  .grip { display: none; }
+  .panel-head { padding: 12px 16px; border-bottom: 1px solid var(--line); background: var(--indigo-soft); display: flex; gap: 10px; align-items: flex-start; flex: none; }
+  .panel-head .txt { flex: 1; min-width: 0; }
+  .panel-head .eyebrow { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; }
+  .panel-head h3 { margin: 1px 0 0; font-family: var(--font-display); font-size: 21px; font-weight: 700; line-height: 1.15; }
+  .panel-head .meta { font-size: 13px; color: var(--ink-2); margin-top: 1px; }
+  .panel-head .back { border: 0; background: transparent; color: var(--indigo); font-weight: 700; font-size: 12.5px; padding: 0; margin-top: 4px; }
+  .panel-head .close { display: none; }
+  .panel-body { overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 12px 16px 16px; display: flex; flex-direction: column; gap: 10px; }
+  .empty { padding: 26px 16px; text-align: center; color: var(--ink-3); font-size: 14px; }
+  .empty svg { width: 36px; height: 36px; opacity: 0.5; margin-bottom: 6px; }
+  .more-note { font-size: 12.5px; color: var(--ink-3); text-align: center; padding: 6px; }
+
+  .dtable { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .dtable th { text-align: left; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); padding: 4px 6px; border-bottom: 1px solid var(--line); font-weight: 600; }
+  .dtable th.r, .dtable td.r { text-align: right; }
+  .dtable td { padding: 9px 6px; border-bottom: 1px solid var(--line); }
+  .dtable tr.row { cursor: pointer; }
+  .dtable tr.row:active td { background: var(--paper-3); }
+  .dtable tr.zero td { color: var(--red); }
+  .dtable td.total { font-weight: 700; }
+  .dtable td .chev { color: var(--ink-3); margin-left: 4px; }
+
+  .card {
+    border: 1px solid var(--line); border-left: 4px solid var(--marigold); border-radius: 8px;
+    padding: 10px 12px; background: var(--paper); display: flex; flex-direction: column; gap: 6px;
+  }
+  .card.eve { border-left-color: var(--indigo); }
+  .card.issue { border-left-color: var(--red); }
+  .card .top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+  .card .troupe { font-weight: 700; font-size: 15.5px; line-height: 1.3; }
+  .chip { flex: none; display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 3px 8px; border-radius: 999px; background: var(--marigold-soft); color: var(--ink-2); white-space: nowrap; }
+  .chip.eve { background: var(--indigo-soft); }
+  .chip.red { background: var(--red-soft); color: var(--red); }
+  .chip svg { width: 13px; height: 13px; }
+  .card .row { display: flex; gap: 8px; font-size: 13.5px; color: var(--ink-2); align-items: flex-start; }
+  .card .row svg { width: 15px; height: 15px; flex: none; margin-top: 2px; color: var(--ink-3); }
+  .card .row a { color: var(--indigo); text-decoration: none; font-weight: 600; }
+
+  /* ---------- Footer ---------- */
+  .foot { margin-top: 16px; display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--ink-3); border-top: 1px solid var(--line); padding-top: 10px; }
+  .foot .live { display: inline-flex; align-items: center; gap: 6px; }
+  .foot .live i { width: 8px; height: 8px; border-radius: 50%; background: var(--marigold); display: inline-block; }
+  .foot .live.ok i { background: var(--green); }
+
+  /* ---------- Wider screens ---------- */
+  @media (min-width: 640px) {
+    .controls { grid-template-columns: 1fr 1fr; }
+    .cell { min-height: 80px; }
+    .cell .count { font-size: 24px; }
+    .cell .d { font-size: 13px; }
+  }
+  @media (min-width: 900px) {
+    .masthead-inner { padding: 18px 20px 20px; }
+    .emblem { width: 54px; height: 54px; } .emblem svg { width: 33px; height: 33px; }
+    .brand h1 { font-size: 34px; }
+    .dept { display: block; }
+    .page { padding-inline: 20px; }
+    .controls { grid-template-columns: 1.3fr 1fr auto; align-items: end; }
+    .layout { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 16px; align-items: start; }
+    .panel { margin-top: 0; position: sticky; top: 12px; max-height: calc(100vh - 30px); }
+    .panel-body { max-height: none; }
+    .cell { min-height: 84px; }
+    .foot { flex-direction: row; justify-content: space-between; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
+</style>
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <div class="emblem" aria-hidden="true">
+      <svg viewBox="0 0 40 40" fill="none">
+        <circle cx="20" cy="20" r="15" stroke="#1E2D5C" stroke-width="2.4"/>
+        <circle cx="20" cy="20" r="3" fill="#1E2D5C"/>
+        <g stroke="#1E2D5C" stroke-width="2" stroke-linecap="round">
+          <line x1="20" y1="6" x2="20" y2="13"/><line x1="20" y1="27" x2="20" y2="34"/>
+          <line x1="6" y1="20" x2="13" y2="20"/><line x1="27" y1="20" x2="34" y2="20"/>
+          <line x1="10.1" y1="10.1" x2="15" y2="15"/><line x1="25" y1="25" x2="29.9" y2="29.9"/>
+          <line x1="29.9" y1="10.1" x2="25" y2="15"/><line x1="15" y1="25" x2="10.1" y2="29.9"/>
+        </g>
+      </svg>
+    </div>
+    <div class="brand">
+      <h1 data-i18n="title">શેરી નાટક</h1>
+      <p class="sub" data-i18n="subtitle">District-wise Programme Calendar · Gujarat</p>
+    </div>
+    <div class="dept">
+      <strong data-i18n="dept">કમિશનરશ્રી, યુવક સેવા અને સાંસ્કૃતિક પ્રવૃત્તિઓ</strong>
+      <span data-i18n="govt">Government of Gujarat</span>
+    </div>
+  </div>
+  <div class="toran" aria-hidden="true"></div>
+</header>
+
+<main class="page">
+
+  <section class="controls" aria-label="Filters">
+    <div class="field">
+      <label for="district" data-i18n="districtLabel">District</label>
+      <div class="select-wrap"><select id="district"></select></div>
+    </div>
+    <div class="field">
+      <label data-i18n="monthLabel">Month</label>
+      <div class="row2">
+        <div class="month-nav">
+          <button id="prevMonth" type="button" aria-label="Previous month"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+          <div class="label" id="monthLabel"></div>
+          <button id="nextMonth" type="button" aria-label="Next month"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></button>
+        </div>
+        <button class="btn" id="todayBtn" type="button" data-i18n="today">Today</button>
+      </div>
+    </div>
+    <div class="field">
+      <label data-i18n="langLabel">Language</label>
+      <div class="seg" role="group" aria-label="Language">
+        <button type="button" id="langGu" data-lang="gu">ગુજરાતી</button>
+        <button type="button" id="langEn" data-lang="en">English</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="stats" aria-label="Summary">
+    <div class="stat"><span class="k" data-i18n="statMonth">This month</span><span class="v num" id="statMonth">0</span><span class="s" id="statMonthSub"></span></div>
+    <div class="stat marigold"><span class="k" data-i18n="statToday">Today</span><span class="v num" id="statToday">0</span><span class="s" id="statTodaySub"></span></div>
+    <div class="stat green"><span class="k" data-i18n="statDistricts">Districts active</span><span class="v num" id="statDistricts">0</span><span class="s" id="statDistrictsSub"></span></div>
+  </section>
+
+  <div class="layout">
+    <section class="calendar" aria-label="Calendar">
+      <div class="cal-head">
+        <div>
+          <h2 id="calTitle"></h2>
+          <div class="scope" id="calScope"></div>
+        </div>
+        <div class="split num" id="calSplit"></div>
+      </div>
+      <div class="weekdays" id="weekdays"></div>
+      <div class="grid" id="grid"></div>
+      <div class="legend">
+        <span data-i18n="fewer">Fewer</span>
+        <i style="background:var(--c1)"></i><i style="background:var(--c2)"></i><i style="background:var(--c3)"></i><i style="background:var(--c4)"></i><i style="background:var(--c5)"></i>
+        <span data-i18n="more">More</span>
+      </div>
+    </section>
+
+    <div class="backdrop" id="backdrop"></div>
+    <aside class="panel" id="panel" aria-label="Details">
+      <div class="grip" aria-hidden="true"></div>
+      <div class="panel-head">
+        <div class="txt">
+          <div class="eyebrow" id="panelEyebrow"></div>
+          <h3 id="panelTitle"></h3>
+          <div class="meta" id="panelMeta"></div>
+          <button type="button" class="back" id="panelBack" hidden></button>
+        </div>
+        <button type="button" class="close" id="panelClose" aria-label="Close"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      </div>
+      <div class="panel-body" id="panelBody"></div>
+    </aside>
+  </div>
+
+  <footer class="foot">
+    <span class="live" id="liveStatus"><i></i><span id="liveText"></span></span>
+    <span data-i18n="footNote">Tap a date for details. In the Entire Gujarat view, tap a district row to drill down.</span>
+  </footer>
+</main>
+
+<script>
+/* =========================================================
+   CONFIG — live data source
+   Leave sheetCsvUrls empty for demo data. For the live version,
+   publish the sheet tab(s) to web as CSV and list the links here.
+   ========================================================= */
+const CONFIG = {
+  sheetCsvUrls: [
+    'https://docs.google.com/spreadsheets/d/e/2PACX-1vR53ojsKSbvFHP6FvfP7lVAd_aMDJXZZpAYHzPvyEUYEwj2ANS-r-ZONWsnEY6ml0bTAjsZvbyrtp_Y/pub?gid=446634188&single=true&output=csv'
+  ],
+  refreshSeconds: 60,
+  demoFallback: false,   // true: show sample data when the sheet cannot be reached (demo link only). The embed build sets this to false.
+  columns: { district: 'જિલ્લો', date: 'તારીખ', time: 'સમય', troupe: 'મંડળીનું નામ', leader: 'આગેવાનનું નામ', mobile: 'મોબાઈલ', venue: 'સ્થળ' }
+};
+
+const DISTRICTS = [
+  ['અમદાવાદ','Ahmedabad',1.6],['અમરેલી','Amreli',0.9],['આણંદ','Anand',1.0],['અરવલ્લી','Aravalli',0.8],
+  ['બનાસકાંઠા','Banaskantha',1.3],['ભરૂચ','Bharuch',0.9],['ભાવનગર','Bhavnagar',1.1],['બોટાદ','Botad',0.6],
+  ['છોટા ઉદેપુર','Chhota Udepur',0.7],['દાહોદ','Dahod',1.0],['ડાંગ','Dang',0.5],['દેવભૂમિ દ્વારકા','Devbhumi Dwarka',0.6],
+  ['ગાંધીનગર','Gandhinagar',1.0],['ગીર સોમનાથ','Gir Somnath',0.8],['જામનગર','Jamnagar',0.9],['જૂનાગઢ','Junagadh',1.0],
+  ['ખેડા','Kheda',1.0],['કચ્છ','Kutch',1.1],['મહીસાગર','Mahisagar',0.7],['મહેસાણા','Mehsana',1.0],
+  ['મોરબી','Morbi',0.8],['નર્મદા','Narmada',0.6],['નવસારી','Navsari',0.8],['પંચમહાલ','Panchmahal',0.9],
+  ['પાટણ','Patan',0.8],['પોરબંદર','Porbandar',0.6],['રાજકોટ','Rajkot',1.4],['સાબરકાંઠા','Sabarkantha',0.9],
+  ['સુરત','Surat',1.5],['સુરેન્દ્રનગર','Surendranagar',0.9],['તાપી','Tapi',0.6],['વડોદરા','Vadodara',1.3],
+  ['વલસાડ','Valsad',0.9],['વાવ-થરાદ','Vav-Tharad',0.6]
+];
+const DIST_SET = new Set(DISTRICTS.map(d => d[0]));
+
+const I18N = {
+  gu: {
+    title: 'શેરી નાટક', subtitle: 'જિલ્લાવાર કાર્યક્રમ કેલેન્ડર · ગુજરાત',
+    dept: 'કમિશનરશ્રી, યુવક સેવા અને સાંસ્કૃતિક પ્રવૃત્તિઓ', govt: 'ગુજરાત સરકાર',
+    demoLabel: 'નમૂનાની વિગત.', demoText: 'આશરે 2000 નાટકોના આયોજિત પ્રમાણે ઉદાહરણરૂપ એન્ટ્રી. લાઈવ આવૃત્તિ Google Sheet માંથી વિગત લેશે.',
+    districtLabel: 'જિલ્લો', monthLabel: 'મહિનો', today: 'આજે', searchLabel: 'શોધો', searchPh: 'મંડળી, સ્થળ, આગેવાન…', langLabel: 'ભાષા',
+    statMonth: 'આ મહિને', statToday: 'આજે', statDistricts: 'સક્રિય જિલ્લા', statIssues: 'સુધારો જરૂરી', statIssuesSub: 'શીટ એન્ટ્રી · જોવા માટે ટૅપ કરો',
+    onDays: 'દિવસોમાં', of: 'માંથી', fewer: 'ઓછા', more: 'વધુ',
+    footNote: 'વિગત માટે તારીખ પર ટૅપ કરો. સમગ્ર ગુજરાત દૃશ્યમાં જિલ્લાની હરોળ પર ટૅપ કરો.',
+    allGujarat: 'સમગ્ર ગુજરાત', programmes: 'નાટક', across: 'જિલ્લાઓમાં',
+    selectDate: 'તારીખ પસંદ કરો', noProg: 'આ તારીખે કોઈ નાટક નથી', pickDate: 'કેલેન્ડરમાં તારીખ પર ટૅપ કરો',
+    morning: 'સવાર', evening: 'સાંજ', total: 'કુલ', district: 'જિલ્લો', backAll: '← સમગ્ર ગુજરાત',
+    searchResults: 'શોધ પરિણામ', showingFirst: 'પ્રથમ 150 બતાવ્યા છે – શોધ સાંકડી કરો', noResults: 'કોઈ પરિણામ નથી',
+    issuesTitle: 'સુધારો જરૂરી', issuesMeta: 'આ એન્ટ્રી કેલેન્ડરમાં દેખાતી નથી', noIssues: 'બધી એન્ટ્રી બરાબર છે',
+    badDistrict: 'જિલ્લાનું નામ ઓળખાયું નથી', badDate: 'તારીખ ખોટી / ખાલી', tab: 'ટેબ', rowN: 'હરોળ',
+    live: 'લાઈવ: Google Sheet', demo: 'નમૂનાની વિગત', updated: 'છેલ્લે અપડેટ', fetchError: 'શીટ સાથે જોડાણ થઈ શક્યું નથી – થોડી વારમાં ફરી પ્રયત્ન થશે',
+    days: ['રવિ','સોમ','મંગળ','બુધ','ગુરુ','શુક્ર','શનિ'],
+    months: ['જાન્યુઆરી','ફેબ્રુઆરી','માર્ચ','એપ્રિલ','મે','જૂન','જુલાઈ','ઑગસ્ટ','સપ્ટેમ્બર','ઑક્ટોબર','નવેમ્બર','ડિસેમ્બર'],
+    monthsShort: ['જાન્યુ','ફેબ્રુ','માર્ચ','એપ્રિલ','મે','જૂન','જુલાઈ','ઑગ','સપ્ટે','ઑક્ટો','નવે','ડિસે']
+  },
+  en: {
+    title: 'શેરી નાટક', subtitle: 'District-wise Programme Calendar · Gujarat',
+    dept: 'Office of the Commissioner of Youth Services & Cultural Activities, Gandhinagar', govt: 'Government of Gujarat',
+    demoLabel: 'Demo data.', demoText: 'Sample entries at the planned scale of about 2000 plays. The live version will read from the Google Sheet.',
+    districtLabel: 'District', monthLabel: 'Month', today: 'Today', searchLabel: 'Search', searchPh: 'Troupe, venue, leader…', langLabel: 'Language',
+    statMonth: 'This month', statToday: 'Today', statDistricts: 'Districts active', statIssues: 'Needs correction', statIssuesSub: 'sheet entries · tap to view',
+    onDays: 'days', of: 'of', fewer: 'Fewer', more: 'More',
+    footNote: 'Tap a date for details. In the Entire Gujarat view, tap a district row to drill down.',
+    allGujarat: 'Entire Gujarat', programmes: 'plays', across: 'districts',
+    selectDate: 'Select a date', noProg: 'No plays on this date', pickDate: 'Tap a date on the calendar',
+    morning: 'Morning', evening: 'Evening', total: 'Total', district: 'District', backAll: '← Entire Gujarat',
+    searchResults: 'Search results', showingFirst: 'Showing first 150 – narrow the search', noResults: 'No results',
+    issuesTitle: 'Needs correction', issuesMeta: 'These entries do not appear on the calendar', noIssues: 'All entries are valid',
+    badDistrict: 'District name not recognised', badDate: 'Date missing or invalid', tab: 'Tab', rowN: 'Row',
+    live: 'Live: Google Sheet', demo: 'Demo data', updated: 'Last updated', fetchError: 'Could not reach the sheet – will retry shortly',
+    days: ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
+    months: ['January','February','March','April','May','June','July','August','September','October','November','December'],
+    monthsShort: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+  }
+};
+
+/* ---------- helpers ---------- */
+const $ = id => document.getElementById(id);
+const pad2 = n => String(n).padStart(2, '0');
+const ymd = d => `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
+const fromKey = k => { const [y, m, d] = k.split('-').map(Number); return new Date(y, m - 1, d); };
+const addDays = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const isMorning = v => /સવાર|morning|am/i.test(v || '');
+const todayKey = ymd(new Date());
+const isPhone = () => window.innerWidth < 900;
+
+/* ---------- Demo data ---------- */
+function makeDemo() {
+  let s = 20260918;
+  const rnd = () => { s = (s * 1664525 + 1013904223) % 4294967296; return s / 4294967296; };
+  const pick = a => a[Math.floor(rnd() * a.length)];
+  const troupes = ['શ્રી નટરાજ કલા મંડળી','જય અંબે લોકકલા મંડળ','સરસ્વતી નાટ્ય વૃંદ','ભારતી કલા કેન્દ્ર','નવયુવક સાંસ્કૃતિક મંડળ','રંગભૂમિ કલા મંડળી','ગુર્જર લોકનાટ્ય મંડળ','શિવશક્તિ યુવક મંડળ','વિવેકાનંદ યુવા મંડળ','લોકરંગ કલા મંડળી','ઉમિયા સાંસ્કૃતિક મંડળ','રંગમંચ નાટ્ય સંસ્થા','સોરઠ કલા વૃંદ','આદિવાસી લોકકલા મંડળ','મેઘધનુષ યુવક મંડળ','નર્મદા નાટ્ય મંડળી'];
+  const leaders = ['રમેશભાઈ પટેલ','હિનાબેન જોષી','કિરણભાઈ સોલંકી','મનીષાબેન રાવળ','જયેશભાઈ ચૌધરી','ભાવનાબેન દેસાઈ','નરેશભાઈ વાઘેલા','પ્રિયંકાબેન ઠાકોર','દિનેશભાઈ પરમાર','અલ્પાબેન શાહ','મહેશભાઈ રાઠોડ','કોકિલાબેન ભટ્ટ'];
+  const venues = ['ટાઉન હોલ','ગામ ચોક','પ્રાથમિક શાળા મેદાન','ગ્રામ પંચાયત ભવન','બસ સ્ટેન્ડ ચોક','મામલતદાર કચેરી પરિસર','બજાર ચોક','કૉલેજ મેદાન','સરદાર બાગ','જિલ્લા સેવા સદન','આંગણવાડી કેન્દ્ર','સામૂહિક આરોગ્ય કેન્દ્ર','તાલુકા પંચાયત','હાટ બજાર'];
+  const villages = ['મોટા','નાના','જૂના','નવા','ઉપલા','નીચલા'];
+  // sample window: 17 Sep – 31 Oct 2026, about 2000 plays, heavier on weekends
+  const days = []; for (let d = new Date(2026, 8, 17); d <= new Date(2026, 9, 31); d = addDays(d, 1)) days.push(ymd(d));
+  const dayW = days.map(k => { const dow = fromKey(k).getDay(); return (dow === 0 || dow === 6) ? 1.7 : 1; });
+  const cum = []; dayW.reduce((a, w, i) => (cum[i] = a + w), 0); const sum = cum[cum.length - 1];
+  const pickDay = () => { const r = rnd() * sum; return days[cum.findIndex(c => c >= r)]; };
+  const events = [];
+  const wsum = DISTRICTS.reduce((a, d) => a + d[2], 0);
+  for (const [gu, en, w] of DISTRICTS) {
+    const n = Math.round(2000 * w / wsum * (0.85 + rnd() * 0.3));
+    for (let i = 0; i < n; i++) {
+      events.push({ district: gu, date: pickDay(), time: rnd() < 0.42 ? 'સવાર' : 'સાંજ', troupe: pick(troupes), leader: pick(leaders),
+        mobile: '9' + String(Math.floor(rnd() * 900000000 + 100000000)), venue: `${pick(venues)}, ${pick(villages)} ${gu.split(' ')[0]}`, tab: gu, row: i + 3 });
+    }
+  }
+  const issues = [
+    { district: 'અમદાવદ', date: '2026-09-21', time: 'સાંજ', troupe: 'શ્રી નટરાજ કલા મંડળી', leader: 'રમેશભાઈ પટેલ', mobile: '9876543210', venue: 'ટાઉન હોલ', tab: 'અમદાવાદ', row: 17, reason: 'badDistrict' },
+    { district: 'સુરત', date: null, raw: '21 સપ્ટે', time: 'સવાર', troupe: 'લોકરંગ કલા મંડળી', leader: 'અલ્પાબેન શાહ', mobile: '9812345678', venue: 'બજાર ચોક', tab: 'સુરત', row: 24, reason: 'badDate' },
+    { district: 'રાજકોટ', date: null, raw: '', time: 'સાંજ', troupe: 'સોરઠ કલા વૃંદ', leader: 'મહેશભાઈ રાઠોડ', mobile: '', venue: 'સરદાર બાગ', tab: 'રાજકોટ', row: 41, reason: 'badDate' },
+    { district: 'Kutch', date: '2026-09-25', time: 'સવાર', troupe: 'ભારતી કલા કેન્દ્ર', leader: 'કિરણભાઈ સોલંકી', mobile: '9898989898', venue: 'ગામ ચોક', tab: 'કચ્છ', row: 9, reason: 'badDistrict' }
+  ];
+  return { events, issues };
+}
+
+/* ---------- CSV → events (live sheet) ---------- */
+function parseCSV(text) {
+  const rows = []; let row = [], field = '', q = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (q) { if (c === '"') { if (text[i+1] === '"') { field += '"'; i++; } else q = false; } else field += c; }
+    else if (c === '"') q = true;
+    else if (c === ',') { row.push(field); field = ''; }
+    else if (c === '\n') { row.push(field); rows.push(row); row = []; field = ''; }
+    else if (c !== '\r') field += c;
+  }
+  if (field.length || row.length) { row.push(field); rows.push(row); }
+  return rows;
+}
+function normDate(v) {
+  v = String(v || '').trim();
+  let m = v.match(/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{4})/);
+  if (m) return `${m[3]}-${pad2(m[2])}-${pad2(m[1])}`;
+  m = v.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (m) return v.slice(0, 10);
+  return null;
+}
+function rowsToEvents(rows, tabName) {
+  const hi = rows.findIndex(r => r.some(c => String(c).includes(CONFIG.columns.date)));
+  if (hi < 0) return { events: [], issues: [] };
+  const head = rows[hi].map(h => String(h).trim());
+  const ix = Object.fromEntries(Object.keys(CONFIG.columns).map(k => [k, head.findIndex(h => h.includes(CONFIG.columns[k]))]));
+  const g = (r, k) => String(ix[k] >= 0 ? (r[ix[k]] ?? '') : '').trim();
+  const events = [], issues = [];
+  rows.slice(hi + 1).forEach((r, i) => {
+    const rawDate = g(r, 'date');
+    if (!(g(r, 'troupe') || g(r, 'venue') || rawDate)) return;   // untouched template row
+    const e = { district: g(r, 'district'), date: normDate(rawDate), raw: rawDate, time: g(r, 'time'), troupe: g(r, 'troupe'), leader: g(r, 'leader'), mobile: g(r, 'mobile'), venue: g(r, 'venue'), tab: tabName, row: hi + i + 2 };
+    if (!e.date) { e.reason = 'badDate'; issues.push(e); }
+    else if (!DIST_SET.has(e.district)) { e.reason = 'badDistrict'; issues.push(e); }
+    else events.push(e);
+  });
+  return { events, issues };
+}
+async function fetchLive() {
+  const events = [], issues = [];
+  for (const url of CONFIG.sheetCsvUrls) {
+    const res = await fetch(url + (url.includes('?') ? '&' : '?') + 't=' + Date.now(), { cache: 'no-store' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const r = rowsToEvents(parseCSV(await res.text()), url);
+    events.push(...r.events); issues.push(...r.issues);
+  }
+  return { events, issues };
+}
+
+/* ---------- State ---------- */
+const state = {
+  lang: 'gu', district: 'ALL', month: new Date(), q: '', selected: null, mode: 'date', sheetOpen: false,
+  events: [], issues: [], live: false, updatedAt: null
+};
+try { const l = localStorage.getItem('sn-lang'); if (l === 'gu' || l === 'en') state.lang = l; } catch (e) {}
+const t = k => I18N[state.lang][k];
+const distName = gu => { const d = DISTRICTS.find(x => x[0] === gu); return !d ? gu : (state.lang === 'gu' ? d[0] : d[1]); };
+const distBoth = gu => { const d = DISTRICTS.find(x => x[0] === gu); return !d ? gu : (state.lang === 'gu' ? `${d[0]} · ${d[1]}` : `${d[1]} · ${d[0]}`); };
+const scopeName = () => state.district === 'ALL' ? t('allGujarat') : distBoth(state.district);
+const fmtDate = k => { const d = fromKey(k); return `${d.getDate()} ${t('months')[d.getMonth()]} ${d.getFullYear()}`; };
+const fmtShort = k => { const d = fromKey(k); return `${d.getDate()} ${t('monthsShort')[d.getMonth()]}`; };
+const monthKey = () => `${state.month.getFullYear()}-${pad2(state.month.getMonth() + 1)}`;
+
+function matchesQ(e) {
+  if (!state.q) return true;
+  const q = state.q.toLowerCase();
+  return [e.troupe, e.venue, e.leader, e.mobile, e.district, distName(e.district)].some(v => String(v || '').toLowerCase().includes(q));
+}
+function scoped() { return state.events.filter(e => (state.district === 'ALL' || e.district === state.district) && matchesQ(e)); }
+function level(n, min, max) { if (n <= 0) return 0; if (max <= min) return 3; return 1 + Math.round((n - min) / (max - min) * 4); }
+function minMax(counts) { const nz = counts.filter(n => n > 0); return nz.length ? [Math.min(...nz), Math.max(...nz)] : [0, 0]; }
+
+/* ---------- Render ---------- */
+function renderStatic() {
+  document.querySelectorAll('[data-i18n]').forEach(el => { const v = t(el.dataset.i18n); if (typeof v === 'string') el.textContent = v; });
+  document.documentElement.lang = state.lang;
+  $('langGu').classList.toggle('on', state.lang === 'gu');
+  $('langEn').classList.toggle('on', state.lang === 'en');
+  const sel = $('district'); sel.innerHTML = '';
+  const o = document.createElement('option'); o.value = 'ALL'; o.textContent = t('allGujarat'); sel.appendChild(o);
+  for (const [gu, en] of DISTRICTS) { const op = document.createElement('option'); op.value = gu; op.textContent = state.lang === 'gu' ? `${gu} · ${en}` : `${en} · ${gu}`; sel.appendChild(op); }
+  sel.value = state.district;
+  $('weekdays').innerHTML = t('days').map(d => `<div>${d}</div>`).join('');
+  $('liveStatus').classList.toggle('ok', state.live && !state.error);
+  const stamp = state.updatedAt ? ` · ${t('updated')} ${state.updatedAt.toLocaleTimeString(state.lang === 'gu' ? 'gu-IN' : 'en-IN', {hour:'2-digit', minute:'2-digit'})}` : '';
+  $('liveText').textContent = state.error && !state.live ? t('fetchError') : (state.live ? t('live') : t('demo')) + stamp;
+}
+
+function renderStats() {
+  const mk = monthKey();
+  const evs = scoped().filter(e => e.date.startsWith(mk));
+  $('statMonth').textContent = evs.length;
+  $('statMonthSub').textContent = `${new Set(evs.map(e => e.date)).size} ${t('onDays')}`;
+  const today = scoped().filter(e => e.date === todayKey).length;
+  $('statToday').textContent = today; $('statTodaySub').textContent = fmtShort(todayKey);
+  const dset = new Set(evs.map(e => e.district)).size;
+  $('statDistricts').textContent = dset;
+  $('statDistrictsSub').textContent = `${t('of')} ${state.district === 'ALL' ? DISTRICTS.length : 1}`;
+}
+
+function renderCalendar() {
+  const y = state.month.getFullYear(), m = state.month.getMonth();
+  const first = new Date(y, m, 1), last = new Date(y, m + 1, 0);
+  const from = addDays(first, -first.getDay()), to = addDays(last, 6 - last.getDay());
+  const days = []; for (let d = from; d <= to; d = addDays(d, 1)) days.push({ key: ymd(d), pad: d.getMonth() !== m });
+  const evs = scoped();
+  const byDay = {}; for (const e of evs) (byDay[e.date] ||= []).push(e);
+  const [min, max] = minMax(days.filter(d => !d.pad).map(d => (byDay[d.key] || []).length));
+  const lbl = `${t('months')[m]} ${y}`;
+  $('monthLabel').textContent = lbl; $('calTitle').textContent = lbl;
+  $('calScope').textContent = scopeName();
+  const monthEvs = evs.filter(e => e.date.startsWith(monthKey()));
+  const mor = monthEvs.filter(e => isMorning(e.time)).length;
+  $('calSplit').innerHTML = monthEvs.length ? `<span><i></i>${t('morning')} ${mor}</span><span><i class="eve"></i>${t('evening')} ${monthEvs.length - mor}</span>` : '';
+  $('grid').innerHTML = days.map(({ key, pad }) => {
+    const d = fromKey(key), list = byDay[key] || [], n = list.length;
+    const lv = pad ? 0 : level(n, min, max);
+    const mo = list.some(e => isMorning(e.time)), ev = list.some(e => !isMorning(e.time));
+    const cls = ['cell', pad ? 'pad' : '', lv ? 'n' + lv : '', key === todayKey ? 'today' : '', (!pad && key === state.selected && state.mode === 'date') ? 'selected' : ''].filter(Boolean).join(' ');
+    const dots = !pad && n ? `<span class="dots" aria-hidden="true">${mo ? '<i></i>' : ''}${ev ? '<i class="eve"></i>' : ''}</span>` : '<span class="dots"></span>';
+    const count = !pad && n ? `<span class="count num">${n}</span>` : '<span class="count"></span>';
+    return `<button type="button" class="${cls}" data-key="${key}" ${pad ? 'tabindex="-1" aria-hidden="true"' : `aria-label="${fmtDate(key)}, ${n} ${t('programmes')}"`}>
+      <span class="d num ${d.getDay() === 0 ? 'sun' : ''}">${d.getDate()}</span>${count}${dots}</button>`;
+  }).join('');
+}
+
+const ICON = {
+  sun: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.9 4.9l1.4 1.4m11.4 11.4l1.4 1.4M4.9 19.1l1.4-1.4m11.4-11.4l1.4-1.4"/></svg>',
+  moon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>',
+  pin: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 21s-7-6.5-7-11a7 7 0 0 1 14 0c0 4.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>',
+  person: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>',
+  phone: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>',
+  cal: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
+  sheet: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/></svg>'
+};
+function card(e, opts = {}) {
+  const mor = isMorning(e.time);
+  return `<article class="card ${mor ? '' : 'eve'}">
+    <div class="top"><div class="troupe">${esc(e.troupe) || '—'}</div><span class="chip ${mor ? '' : 'eve'}">${mor ? ICON.sun : ICON.moon}${mor ? t('morning') : t('evening')}</span></div>
+    ${opts.showDate ? `<div class="row">${ICON.cal}<span class="num">${fmtDate(e.date)}${state.district === 'ALL' ? ` · ${distName(e.district)}` : ''}</span></div>` : ''}
+    <div class="row">${ICON.pin}<span>${esc(e.venue) || '—'}</span></div>
+    <div class="row">${ICON.person}<span>${esc(e.leader) || '—'}</span></div>
+    ${e.mobile ? `<div class="row">${ICON.phone}<a class="num" href="tel:${esc(e.mobile)}">${esc(e.mobile)}</a></div>` : ''}
+  </article>`;
+}
+function issueCard(i) {
+  return `<article class="card issue">
+    <div class="top"><div class="troupe">${esc(i.troupe) || '—'}</div><span class="chip red">${t(i.reason)}</span></div>
+    <div class="row">${ICON.sheet}<span>${t('tab')}: ${esc(i.tab)} · ${t('rowN')} ${i.row}</span></div>
+    <div class="row">${ICON.cal}<span>${i.reason === 'badDate' ? `"${esc(i.raw)}"` : esc(i.date ? fmtDate(i.date) : '')}${i.reason === 'badDistrict' ? ` · "${esc(i.district)}"` : ''}</span></div>
+    <div class="row">${ICON.pin}<span>${esc(i.venue) || '—'}</span></div>
+  </article>`;
+}
+function renderPanel() {
+  const body = $('panelBody'), back = $('panelBack');
+  back.hidden = state.district === 'ALL'; back.textContent = t('backAll');
+  body.scrollTop = 0;
+
+  if (!state.selected) {
+    $('panelEyebrow').textContent = t('selectDate'); $('panelTitle').textContent = scopeName(); $('panelMeta').textContent = '';
+    body.innerHTML = `<div class="empty">${ICON.cal}<div>${t('pickDate')}</div></div>`;
+    return;
+  }
+  const d = fromKey(state.selected);
+  const list = scoped().filter(e => e.date === state.selected);
+  $('panelEyebrow').textContent = `${t('days')[d.getDay()]} · ${scopeName()}`;
+  $('panelTitle').textContent = fmtDate(state.selected);
+  if (state.district === 'ALL') {
+    const by = {}; for (const e of list) { const b = (by[e.district] ||= { m: 0, e: 0 }); isMorning(e.time) ? b.m++ : b.e++; }
+    const rows = DISTRICTS.map(([gu]) => ({ gu, m: by[gu]?.m || 0, e: by[gu]?.e || 0, n: (by[gu]?.m || 0) + (by[gu]?.e || 0) })).sort((a, b) => b.n - a.n || a.gu.localeCompare(b.gu, 'gu'));
+    $('panelMeta').textContent = `${list.length} ${t('programmes')} · ${rows.filter(r => r.n).length} ${t('across')}`;
+    if (!list.length) { body.innerHTML = `<div class="empty">${ICON.cal}<div>${t('noProg')}</div></div>`; return; }
+    body.innerHTML = `<table class="dtable num"><thead><tr><th>${t('district')}</th><th class="r">${t('morning')}</th><th class="r">${t('evening')}</th><th class="r">${t('total')}</th></tr></thead><tbody>` +
+      rows.map(r => `<tr class="row ${r.n ? '' : 'zero'}" data-d="${esc(r.gu)}"><td>${distName(r.gu)}</td><td class="r">${r.m}</td><td class="r">${r.e}</td><td class="r total">${r.n}<span class="chev">›</span></td></tr>`).join('') + `</tbody></table>`;
+    return;
+  }
+  const sorted = list.sort((a, b) => (isMorning(b.time) - isMorning(a.time)) || a.troupe.localeCompare(b.troupe, 'gu'));
+  const mor = sorted.filter(e => isMorning(e.time)).length;
+  $('panelMeta').textContent = `${sorted.length} ${t('programmes')} · ${t('morning')} ${mor} · ${t('evening')} ${sorted.length - mor}`;
+  body.innerHTML = sorted.length ? sorted.map(e => card(e)).join('') : `<div class="empty">${ICON.cal}<div>${t('noProg')}</div></div>`;
+}
+
+function openSheet() { $('panel').scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+function closeSheet() {}
+function renderAll() { renderStatic(); renderStats(); renderCalendar(); renderPanel(); }
+
+/* ---------- Events ---------- */
+$('district').addEventListener('change', e => { state.district = e.target.value; state.mode = 'date'; renderAll(); });
+$('panelBack').addEventListener('click', () => { state.district = 'ALL'; renderAll(); });
+$('prevMonth').addEventListener('click', () => { state.month = new Date(state.month.getFullYear(), state.month.getMonth() - 1, 1); renderStats(); renderCalendar(); });
+$('nextMonth').addEventListener('click', () => { state.month = new Date(state.month.getFullYear(), state.month.getMonth() + 1, 1); renderStats(); renderCalendar(); });
+$('todayBtn').addEventListener('click', () => { const n = new Date(); state.month = new Date(n.getFullYear(), n.getMonth(), 1); state.selected = todayKey; state.mode = 'date'; renderStats(); renderCalendar(); renderPanel(); if (isPhone()) openSheet(); });
+$('grid').addEventListener('click', e => {
+  const b = e.target.closest('.cell'); if (!b || b.classList.contains('pad')) return;
+  state.selected = b.dataset.key; state.mode = 'date'; renderCalendar(); renderPanel(); if (isPhone()) openSheet();
+});
+$('panelBody').addEventListener('click', e => {
+  const r = e.target.closest('tr.row'); if (!r) return;
+  state.district = r.dataset.d; state.mode = 'date'; renderAll();
+});
+document.querySelectorAll('[data-lang]').forEach(b => b.addEventListener('click', () => { state.lang = b.dataset.lang; try { localStorage.setItem('sn-lang', state.lang); } catch (e) {} renderAll(); }));
+
+/* ---------- Boot ---------- */
+async function load() {
+  if (!CONFIG.sheetCsvUrls.length) { const d = makeDemo(); state.events = d.events; state.issues = d.issues; state.live = false; state.updatedAt = new Date(); return; }
+  try { const d = await fetchLive(); state.events = d.events; state.issues = d.issues; state.live = true; state.error = false; state.updatedAt = new Date();  }
+  catch (err) {
+    console.warn('Sheet fetch failed, keeping previous data', err);
+    state.error = true;
+    if (!state.live && CONFIG.demoFallback) { const d = makeDemo(); state.events = d.events; state.issues = d.issues; state.updatedAt = new Date(); }
+  }
+}
+(async () => {
+  await load();
+  const n = new Date();
+  const hasNow = state.events.some(e => e.date.startsWith(ymd(n).slice(0, 7)));
+  if (hasNow) state.month = new Date(n.getFullYear(), n.getMonth(), 1);
+  else if (state.events.length) { const f = state.events.map(e => e.date).sort()[0]; state.month = fromKey(f); state.month.setDate(1); }
+  state.selected = state.events.some(e => e.date === todayKey) ? todayKey : (state.events.filter(e => e.date >= todayKey).map(e => e.date).sort()[0] || null);
+  renderAll();
+  if (CONFIG.sheetCsvUrls.length) setInterval(async () => { await load(); renderAll(); }, CONFIG.refreshSeconds * 1000);
+})();
+</script>
+
+</body>
+</html>
